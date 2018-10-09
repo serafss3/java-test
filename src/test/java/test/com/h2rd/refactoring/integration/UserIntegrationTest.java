@@ -14,7 +14,7 @@ import com.h2rd.refactoring.web.UserResource;
 public class UserIntegrationTest {
 	
 	@Test
-	public void createUserTest() {
+    public void addUserTest() {
 		UserResource userResource = new UserResource();
 		
 		User integration = new User();
@@ -27,10 +27,10 @@ public class UserIntegrationTest {
 	}
 
 	@Test
-	public void updateUserTest() {
+    public void updateUserTest() {
 		UserResource userResource = new UserResource();
 		
-		createUserTest();
+		addUserTest();
         
         User updated = new User();
         updated.setName("integration");
@@ -40,4 +40,22 @@ public class UserIntegrationTest {
         Response response = userResource.updateUser(updated.getName(), updated.getEmail(), updated.getRoles());
         Assert.assertEquals(200, response.getStatus());
 	}
+
+	@Test
+    public void deleteUserTest() {
+	    UserResource userResource = new UserResource();
+
+	    addUserTest();
+
+        Response response = userResource.deleteUser("initial@integration.com");
+        Assert.assertEquals(200, response.getStatus());
+    }
+
+    @Test
+    public void getUsersTest() {
+        UserResource userResource = new UserResource();
+        Response response = userResource.getUsers();
+
+        Assert.assertEquals(200, response.getStatus());
+    }
 }

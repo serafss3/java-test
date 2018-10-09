@@ -14,7 +14,7 @@ public class UserResourceUnitTest {
     UserDao userDao;
 
     @Test
-    public void getUsersTest() {
+    public void getUsersTest() throws Exception {
 
         userResource = new UserResource();
         userDao = UserDao.getUserDao();

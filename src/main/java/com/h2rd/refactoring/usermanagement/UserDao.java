@@ -1,71 +1,61 @@
 package com.h2rd.refactoring.usermanagement;
 
-import java.util.ArrayList;
+import com.sun.jersey.spi.resource.Singleton;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
+/**
+ *
+ */
+@Singleton
 public class UserDao {
 
-    public ArrayList<User> users;
+    private static HashMap<String, User> users = new HashMap<String, User>();
 
-    public static UserDao userDao;
+    private static UserDao userDao = new UserDao();
 
     public static UserDao getUserDao() {
-        if (userDao == null) {
-            userDao = new UserDao();
-        }
         return userDao;
     }
 
     public void saveUser(User user) {
-        if (users == null) {
-            users = new ArrayList<User>();
+        if (!users.containsKey(user.getEmail())) {
+            users.put(user.getEmail(), user);
         }
-        users.add(user);
     }
 
-    public ArrayList<User> getUsers() {
-        try {
-            return users;
-        } catch (Throwable e) {
-            System.out.println("error");
+    public HashMap<String, User> getUsers() {
+        return users;
+    }
+
+    public User deleteUser(String email) {
+        return users.remove(email);
+    }
+
+    public User updateUser(User userToUpdate) {
+        if (users.containsKey(userToUpdate.getEmail())) {
+            return users.put(userToUpdate.getEmail(), userToUpdate);
+        } else {
             return null;
         }
     }
 
-    public void deleteUser(User userToDelete) {
+    /**
+     *
+     * @param name Not a unique identifier.
+     * @return All users that share the name we want to find.
+     */
+    public ArrayList<User> findUser(String name) {
         try {
-            for (User user : users) {
-                if (user.getName() == userToDelete.getName()) {
-                    users.remove(user);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void updateUser(User userToUpdate) {
-        try {
-            for (User user : users) {
-                if (user.getName() == userToUpdate.getName()) {
-                    user.setEmail(userToUpdate.getEmail());
-                    user.setRoles(userToUpdate.getRoles());
-                }
-            }
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public User findUser(String name) {
-        try {
-            for (User user : users) {
-                if (user.getName() == name) {
-                    return user;
-                }
-            }
+            ArrayList<User> sharedNameUsers = new ArrayList<User>();
+            for (User user: users.values())
+                if (user.getName().equals(name))
+                    sharedNameUsers.add(user);
+            return sharedNameUsers;
         } catch (NullPointerException e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 }
