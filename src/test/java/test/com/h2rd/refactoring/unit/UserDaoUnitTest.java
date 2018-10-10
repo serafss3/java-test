@@ -12,41 +12,28 @@ import java.util.HashMap;
 
 public class UserDaoUnitTest {
 
-    private UserDao userDao;
+    private UserDao userDao = new UserDao();
+
+    User user1 = new User("Fake Name1", "fake@email.com", Arrays.asList("admin", "master"));
 
     @Test
     public void saveUserTest() {
-        userDao = UserDao.getUserDao();
-
-        User user = new User();
-        user.setName("Fake Name");
-        user.setEmail("fake@email.com");
-        user.setRoles(Arrays.asList("admin", "master"));
-
-        userDao.saveUser(user);
+        userDao.saveUser(user1);
     }
 
     @Test
     public void getUsersTest(){
-        saveUserTest();
+        userDao.reset();
+        userDao.saveUser(user1);
         HashMap<String, User> users = userDao.getUsers();
         Assert.assertEquals(users.size(), 1);
     }
 
     @Test
     public void deleteUserTest() {
-        userDao = UserDao.getUserDao();
-
-        User user = new User();
-        user.setName("Fake Name");
-        user.setEmail("fake@email.com");
-        user.setRoles(Arrays.asList("admin", "master"));
-
-        try {
-            userDao.deleteUser(user.getName());
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
+        userDao.reset();
+        userDao.saveUser(user1);
+        userDao.deleteUser("Fake Name1");
     }
 
     @Test
@@ -55,16 +42,18 @@ public class UserDaoUnitTest {
      * We verify here if we are updating the correct user by giving it's old value.
      */
     public void updateUserTest(){
-        saveUserTest();
-
-        User user = userDao.updateUser(new User("Weird person", "fake@email.com", Collections.singletonList("")));
-        Assert.assertSame(user.getName(), "Fake Name");
+        userDao.reset();
+        userDao.saveUser(user1);
+        user1.setName("Another Fake Name");
+        User user = userDao.updateUser(user1);
+        Assert.assertSame(user.getName(), "Another Fake Name");
     }
 
     @Test
     public void findUserTest(){
-        saveUserTest();
-        Assert.assertEquals(userDao.findUser("Weird person").get(0).getEmail(), "fake@email.com");
+        userDao.reset();
+        User user = userDao.saveUser(user1);
+        Assert.assertEquals(user, user1);
     }
 
 

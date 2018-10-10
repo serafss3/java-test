@@ -19,9 +19,14 @@ public class UserDao {
         return userDao;
     }
 
-    public void saveUser(User user) {
+    public void reset(){ users = new HashMap<String, User>();}
+
+    public User saveUser(User user) {
         if (!users.containsKey(user.getEmail())) {
             users.put(user.getEmail(), user);
+            return user;
+        } else {
+            return null;
         }
     }
 
@@ -29,13 +34,19 @@ public class UserDao {
         return users;
     }
 
-    public User deleteUser(String email) {
-        return users.remove(email);
+    public Boolean deleteUser(String email) {
+        if (users.containsKey(email)) {
+            users.remove(email);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public User updateUser(User userToUpdate) {
         if (users.containsKey(userToUpdate.getEmail())) {
-            return users.put(userToUpdate.getEmail(), userToUpdate);
+            users.put(userToUpdate.getEmail(), userToUpdate);
+            return userToUpdate;
         } else {
             return null;
         }

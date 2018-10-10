@@ -26,9 +26,11 @@ public class UserResource{
                             @QueryParam("email") String email,
                             @QueryParam("role") List<String> roles) {
         User user = new User(name, email, roles);
-        userDao.saveUser(user);
-        return Response.ok().entity(user).build();
-
+        if (userDao.saveUser(user) == user) {
+            return Response.ok().entity(user).build();
+        } else {
+            return Response.notModified().build();
+        }
     }
 
     @PUT
@@ -37,17 +39,21 @@ public class UserResource{
                                @QueryParam("email") String email,
                                @QueryParam("role") List<String> roles) {
         User user = new User(name, email, roles);
-        userDao.updateUser(user);
-            return Response.ok()
-                    .entity(user)
-                    .build();
+        if(userDao.updateUser(user) == user) {
+            return Response.ok().entity(user).build();
+        } else {
+            return Response.noContent().build();
+        }
     }
 
     @GET
     @Path("delete/")
     public Response deleteUser(@QueryParam("email") String email) {
-        User user = userDao.deleteUser(email);
-        return Response.ok().entity(user).build();
+        if (userDao.deleteUser(email)) {
+            return Response.ok().build();
+        } else {
+            return Response.notModified().build();
+        }
     }
 
     @GET

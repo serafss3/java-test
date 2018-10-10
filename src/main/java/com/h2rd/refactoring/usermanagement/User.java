@@ -46,4 +46,8 @@ public class User {
         if (roles.isEmpty() || roles.get(0).equals("")){ this.roles = Collections.singletonList("member"); }
         else{ this.roles = roles; }
     }
+
+    public String toString() {
+        return this.getEmail();
+    }
 }
